@@ -68,9 +68,14 @@ button {
     justify-content: space-between;
 }
 
+#stopAlarmButton {
+    display: none;
+}
+
 .display-box {
     min-height: 25px;
 }
+
 #display {
     display: none;
 }
@@ -79,13 +84,14 @@ button {
     list-style: none;
 }
 
-#alarm-list li {
+li {
     display: flex;
-    align-items:center;
+    align-items: center;
     justify-content: center;
+
 }
 
-#alarm-list li > label {
+li>label {
     margin-right: 10px;
 }
 
@@ -95,13 +101,13 @@ button {
     display: inline-block;
     width: 30px;
     height: 17px;
-  }
-  
-  .switch input {
+}
+
+.switch input {
     display: none;
-  }
-  
-  .slider {
+}
+
+.slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -111,9 +117,9 @@ button {
     background-color: #ccc;
     -webkit-transition: 0.4s;
     transition: 0.4s;
-  }
-  
-  .slider:before {
+}
+
+.slider:before {
     position: absolute;
     content: "";
     height: 13px;
@@ -123,33 +129,33 @@ button {
     background-color: white;
     -webkit-transition: 0.4s;
     transition: 0.4s;
-  }
-  
-  input:checked + .slider {
+}
+
+input:checked+.slider {
     background-color: #2196F3;
-  }
-  
-  input:focus + .slider {
+}
+
+input:focus+.slider {
     box-shadow: 0 0 1px #2196F3;
-  }
-  
-  input:checked + .slider:before {
+}
+
+input:checked+.slider:before {
     -webkit-transform: translateX(13px);
     -ms-transform: translateX(13px);
     transform: translateX(13px);
-  }
-  
-  /* Rounded sliders */
-  .slider.round {
-    border-radius: 17px;
-  }
-  
-  .slider.round:before {
-    border-radius: 50%;
-  }
-  
+}
 
-  ::-webkit-scrollbar {
+/* Rounded sliders */
+.slider.round {
+    border-radius: 17px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+
+::-webkit-scrollbar {
     width: 2px;
     /* Width of the scrollbar */
 }
@@ -166,6 +172,11 @@ button {
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+
+#alarmH2 {
+    display: none;
+}
+
 @media only screen and (min-width: 1024px) {
     body {
         overflow-y: hidden;
@@ -184,6 +195,5 @@ button {
     .container {
         width: 40%;
     }
-    
 
 }
