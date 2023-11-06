@@ -50,6 +50,10 @@ label {
 input {
     width: 100%;
     margin-bottom: 5px;
+    border-radius: 5px;
+    outline: none;
+    padding: 3px 6px;
+    border: 1px solid #ffffff;
 }
 
 button {
