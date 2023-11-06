@@ -1,5 +1,6 @@
-let alarms = []; // An array to store alarm settings and intervals
+let alarms = [];
 const display = document.getElementById("display");
+const alarmList = document.querySelector(".alarms")
 
 function startAlarm(alarmIndex) {
   const alarm = alarms[alarmIndex];
@@ -53,7 +54,8 @@ function addAlarmToList(alarmTitle, alarmTime) {
     interval: null,
   });
 
-  document.getElementById("alarm-list").appendChild(alarmItem);
+  alarmList.appendChild(alarmItem);
+  document.getElementById("alarmH2").style.display = "block";
 }
 
 document
