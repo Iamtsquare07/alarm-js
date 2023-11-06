@@ -1,15 +1,13 @@
 let alarms = [];
 const display = document.getElementById("display");
-const alarmList = document.querySelector(".alarms")
+const alarmList = document.querySelector(".alarms");
 
 function startAlarm(alarmIndex) {
   const alarm = alarms[alarmIndex];
   alarm.interval = setInterval(function () {
-    const timeLeft = Math.max(
-      0,
-      Math.floor((alarm.time - new Date()) / 1000)
-    );
+    const timeLeft = Math.max(0, Math.floor((alarm.time - new Date()) / 1000));
     displayCountdown(timeLeft, alarm.title);
+    display.style.display = "inline";
     if (timeLeft === 0) {
       playAlarm();
       display.textContent = `Time for ${alarm.title}`;
@@ -32,11 +30,10 @@ function addAlarmToList(alarmTitle, alarmTime) {
 
   const toggleSwitch = alarmItem.querySelector("input[type='checkbox']");
   toggleSwitch.addEventListener("change", function () {
-    const alarmIndex = alarms.findIndex((alarm) => alarm.toggleSwitch === toggleSwitch);
+    const alarmIndex = alarms.findIndex(
+      (alarm) => alarm.toggleSwitch === toggleSwitch
+    );
     if (toggleSwitch.checked) {
-      // If the toggle is switched on, set the alarm
-      display.style.display = "inline"; // Show the display
-
       // Start the countdown immediately
       startAlarm(alarmIndex);
     } else {
