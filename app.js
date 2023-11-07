@@ -55,46 +55,50 @@ function addAlarmToList(alarmTitle, alarmTime) {
   document.getElementById("alarmH2").style.display = "block";
 }
 
-document
-  .getElementById("setAlarmButton")
-  .addEventListener("click", function () {
-    const alarmTime = document.getElementById("alarmTime").value;
-    const alarmTitle = document.getElementById("title").value;
+document.getElementById("setAlarmButton").addEventListener("click", addAlarm);
 
-    if (!alarmTime) {
-      alert("Please select a valid time for the alarm.");
-      return;
-    }
+document.getElementById("title").addEventListener("keypress", (e) => {
+  if (e.key === "Enter") addAlarm();
+});
 
-    if (!alarmTitle) {
-      alert("Please select a valid title for the alarm.");
-      return;
-    }
+function addAlarm() {
+  const alarmTime = document.getElementById("alarmTime").value;
+  const alarmTitle = document.getElementById("title").value;
 
-    const now = new Date();
-    const [hour, minute] = alarmTime.split(":");
-    const alarmDateTime = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      hour,
-      minute
-    );
+  if (!alarmTime) {
+    alert("Please select a valid time for the alarm.");
+    return;
+  }
 
-    const timeUntilAlarm = alarmDateTime - now;
+  if (!alarmTitle) {
+    alert("Please select a valid title for the alarm.");
+    return;
+  }
 
-    if (timeUntilAlarm <= 0) {
-      alert("Invalid time. Please choose a time in the future.");
-      return;
-    }
+  const now = new Date();
+  const [hour, minute] = alarmTime.split(":");
+  const alarmDateTime = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    hour,
+    minute
+  );
 
-    // Add the alarm to the list and start it immediately
-    addAlarmToList(alarmTitle, alarmDateTime);
-    startAlarm(alarms.length - 1);
+  const timeUntilAlarm = alarmDateTime - now;
 
-    document.getElementById("alarmTime").value = "";
-    document.getElementById("title").value = "";
-  });
+  if (timeUntilAlarm <= 0) {
+    alert("Invalid time. Please choose a time in the future.");
+    return;
+  }
+
+  // Add the alarm to the list and start it immediately
+  addAlarmToList(alarmTitle, alarmDateTime);
+  startAlarm(alarms.length - 1);
+
+  document.getElementById("alarmTime").value = "";
+  document.getElementById("title").value = "";
+}
 
 document
   .getElementById("stopAlarmButton")
