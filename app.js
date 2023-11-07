@@ -2,9 +2,26 @@ let alarms = [];
 const display = document.getElementById("display");
 const alarmList = document.querySelector(".alarms");
 
+// Load saved alarms from localStorage if available
+if (localStorage.alarms) {
+  alarms = JSON.parse(localStorage.alarms);
+  alarms.forEach((alarm, index) => {
+    // Create and append alarm items for loaded alarms
+    const alarmTime = new Date(alarm.time);
+    addAlarmToList(alarm.title, alarmTime);
+    // Check the corresponding toggle switch if the alarm was active
+    if (alarm.active) {
+      alarms[index].interval = startAlarm(index);
+      const toggleSwitch = alarm.toggleSwitch;
+      toggleSwitch.checked = true;
+    }
+  });
+  document.getElementById("alarmH2").style.display = "block";
+}
+
 function startAlarm(alarmIndex) {
   const alarm = alarms[alarmIndex];
-  alarm.interval = setInterval(function () {
+  return setInterval(function () {
     const timeLeft = Math.max(0, Math.floor((alarm.time - new Date()) / 1000));
     displayCountdown(timeLeft, alarm.title);
     display.style.display = "inline";
@@ -35,7 +52,7 @@ function addAlarmToList(alarmTitle, alarmTime) {
     );
     if (toggleSwitch.checked) {
       // Start the countdown immediately
-      startAlarm(alarmIndex);
+      alarms[alarmIndex].interval = startAlarm(alarmIndex);
     } else {
       // If the toggle is switched off, clear the alarm interval
       clearInterval(alarms[alarmIndex].interval);
@@ -49,10 +66,14 @@ function addAlarmToList(alarmTitle, alarmTime) {
     time: alarmTime,
     toggleSwitch: toggleSwitch,
     interval: null,
+    active: true, // Set alarm as active by default
   });
 
   alarmList.appendChild(alarmItem);
   document.getElementById("alarmH2").style.display = "block";
+  
+  // Save the alarms to localStorage
+  localStorage.alarms = JSON.stringify(alarms);
 }
 
 document.getElementById("setAlarmButton").addEventListener("click", addAlarm);
@@ -94,13 +115,14 @@ function addAlarm() {
 
   document.getElementById("alarmTime").value = "";
   document.getElementById("title").value = "";
+
+  // Save the alarms to localStorage
+  localStorage.alarms = JSON.stringify(alarms);
 }
 
-document
-  .getElementById("stopAlarmButton")
-  .addEventListener("click", function () {
-    stopAlarm();
-  });
+document.getElementById("stopAlarmButton").addEventListener("click", function () {
+  stopAlarm();
+});
 
 function displayCountdown(seconds, alarmTitle) {
   const minutes = Math.floor(seconds / 60);
@@ -123,4 +145,7 @@ function stopAlarm() {
   });
   document.getElementById("alarmSound").pause();
   document.getElementById("alarmSound").currentTime = 0;
+  
+  // Save the alarms to localStorage after stopping an alarm
+  localStorage.alarms = JSON.stringify(alarms);
 }
