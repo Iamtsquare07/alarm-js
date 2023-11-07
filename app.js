@@ -77,19 +77,15 @@ function addAlarm() {
 
   const now = new Date();
   const [hour, minute] = alarmTime.split(":");
-  const alarmDateTime = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-    hour,
-    minute
-  );
+  let alarmYear = now.getFullYear();
+  let alarmMonth = now.getMonth();
+  let alarmDay = now.getDate();
 
-  const timeUntilAlarm = alarmDateTime - now;
+  const alarmDateTime = new Date(alarmYear, alarmMonth, alarmDay, hour, minute);
 
-  if (timeUntilAlarm <= 0) {
-    alert("Invalid time. Please choose a time in the future.");
-    return;
+  // Check if the selected time is earlier than the current time
+  if (alarmDateTime <= now) {
+    alarmDateTime.setDate(alarmDay + 1);
   }
 
   // Add the alarm to the list and start it immediately
