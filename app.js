@@ -137,8 +137,12 @@ function stopAlarm() {
   document.getElementById("alarmSound").currentTime = 0;
 }
 
+
 // Load alarms from localStorage when the page loads
 window.addEventListener('load', () => {
+  // Clear the existing alarms in the list
+  alarmList.innerHTML = '';
+
   if (alarms.length > 0) {
     alarms.forEach((alarm, index) => {
       const alarmDateTime = new Date(alarm.time);
@@ -150,3 +154,4 @@ window.addEventListener('load', () => {
     });
   }
 });
+
