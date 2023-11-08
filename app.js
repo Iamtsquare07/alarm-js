@@ -138,15 +138,13 @@ function stopAlarm() {
 }
 
 
-// Load alarms from localStorage when the page loads
+// Load alarms on page load
 window.addEventListener('load', () => {
-  // Clear the existing alarms in the list
   alarmList.innerHTML = '';
 
   if (alarms.length > 0) {
     alarms.forEach((alarm, index) => {
       const alarmDateTime = new Date(alarm.time);
-      // Only add alarms that are in the future
       if (alarmDateTime > new Date()) {
         addAlarmToList(alarm.title, alarmDateTime);
         startAlarm(index);
