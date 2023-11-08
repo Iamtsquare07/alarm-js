@@ -1,5 +1,5 @@
-let alarms = [];
-let nextAlarmId = 1; 
+let alarms = JSON.parse(localStorage.getItem('alarms')) || [];
+let nextAlarmId = localStorage.getItem('nextAlarmId') || 1;
 const display = document.getElementById("display");
 const alarmList = document.querySelector(".alarms");
 
@@ -46,17 +46,26 @@ function addAlarmToList(alarmTitle, alarmTime) {
   });
 
   // Store alarm settings and state in the alarms array
-  alarms.push({
+  const newAlarm = {
     id: alarmId,
     title: alarmTitle,
     time: alarmTime,
     toggleSwitch: toggleSwitch,
     interval: null,
     active: true, // Set alarm as active by default
-  });
+  };
 
+  alarms.push(newAlarm);
   alarmList.appendChild(alarmItem);
   document.getElementById("alarmH2").style.display = "block";
+
+  // Save the updated alarms array to localStorage
+  localStorage.setItem('alarms', JSON.stringify(alarms));
+  localStorage.setItem('nextAlarmId', nextAlarmId);
+
+  // Start the alarm immediately
+  newAlarm.interval = startAlarm(alarms.length - 1);
+
 }
 
 document.getElementById("setAlarmButton").addEventListener("click", addAlarm);
@@ -127,3 +136,17 @@ function stopAlarm() {
   document.getElementById("alarmSound").pause();
   document.getElementById("alarmSound").currentTime = 0;
 }
+
+// Load alarms from localStorage when the page loads
+window.addEventListener('load', () => {
+  if (alarms.length > 0) {
+    alarms.forEach((alarm, index) => {
+      const alarmDateTime = new Date(alarm.time);
+      // Only add alarms that are in the future
+      if (alarmDateTime > new Date()) {
+        addAlarmToList(alarm.title, alarmDateTime);
+        startAlarm(index);
+      }
+    });
+  }
+});
