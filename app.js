@@ -138,7 +138,7 @@ function stopAlarm() {
 }
 
 
-// Load alarms on page load
+// Load alarms from localStorage when the page loads
 window.addEventListener('load', () => {
   alarmList.innerHTML = '';
 
@@ -147,9 +147,9 @@ window.addEventListener('load', () => {
       const alarmDateTime = new Date(alarm.time);
       if (alarmDateTime > new Date()) {
         addAlarmToList(alarm.title, alarmDateTime);
-        startAlarm(index);
+        // Call startAlarm for each loaded alarm
+        alarms[index].interval = startAlarm(index);
       }
     });
   }
 });
-
