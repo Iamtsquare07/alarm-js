@@ -24,9 +24,12 @@ function startAlarm(alarmIndex) {
   }, 1000);
 }
 
-function addAlarmToList(alarmTitle, alarmTime) {
+function addAlarmToList(alarmTitle, alarmTime, selectedDays) {
   const alarmItem = document.createElement("li");
   const alarmId = nextAlarmId++;
+  const daysAbbreviations = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const selectedDaysSet = new Set(selectedDays);
+
   alarmItem.innerHTML = `
     <label>${alarmTitle} (${alarmTime.toLocaleTimeString()})</label>
     <label class="switch">
@@ -34,19 +37,14 @@ function addAlarmToList(alarmTitle, alarmTime) {
       <span class="slider round"></span>
     </label>
     <div class="days-container">
-      <label>Repeat on:</label>
-      <input type="checkbox" id="repeatMonday"> Mon
-      <input type="checkbox" id="repeatWednesday"> Wed
-      <!-- Add more checkboxes for other days as needed -->
+      ${daysAbbreviations.map(day => `<span class="${selectedDaysSet.has(day) ? 'active' : ''}">${day}</span>`).join(' ')}
     </div>
     <button class="edit-button">Edit</button>
   `;
 
   const toggleSwitch = alarmItem.querySelector("input[type='checkbox']");
   toggleSwitch.addEventListener("change", function () {
-    const alarmIndex = alarms.findIndex(
-      (alarm) => alarm.id === alarmId
-    );
+    const alarmIndex = alarms.findIndex((alarm) => alarm.id === alarmId);
     if (toggleSwitch.checked) {
       alarms[alarmIndex].interval = startAlarm(alarmIndex);
     } else {
@@ -60,20 +58,6 @@ function addAlarmToList(alarmTitle, alarmTime) {
     editAlarm(alarmId);
   });
 
-  const daysCheckboxes = alarmItem.querySelectorAll(".days-container input[type='checkbox']");
-  daysCheckboxes.forEach((checkbox, index) => {
-    checkbox.addEventListener("change", function () {
-      if (checkbox.checked) {
-        alarms[alarmIndex].days.push(index); // Store the selected day index
-      } else {
-        const dayIndex = alarms[alarmIndex].days.indexOf(index);
-        if (dayIndex !== -1) {
-          alarms[alarmIndex].days.splice(dayIndex, 1); // Remove the selected day index
-        }
-      }
-    });
-  });
-
   alarms.push({
     id: alarmId,
     title: alarmTitle,
@@ -81,7 +65,7 @@ function addAlarmToList(alarmTitle, alarmTime) {
     toggleSwitch: toggleSwitch,
     interval: null,
     active: true,
-    days: [], // Array to store selected days for recurring alarm
+    days: selectedDays || [],
   });
 
   alarmList.appendChild(alarmItem);
@@ -92,6 +76,10 @@ function addAlarmToList(alarmTitle, alarmTime) {
   localStorage.setItem('nextAlarmId', nextAlarmId);
 }
 
+
+
+
+
 document.getElementById("setAlarmButton").addEventListener("click", addAlarm);
 
 document.getElementById("title").addEventListener("keypress", (e) => {
@@ -101,6 +89,7 @@ document.getElementById("title").addEventListener("keypress", (e) => {
 function addAlarm() {
   const alarmTime = document.getElementById("alarmTime").value;
   const alarmTitle = document.getElementById("title").value;
+  const selectedDays = getSelectedDays();
 
   if (!alarmTime) {
     alert("Please select a valid time for the alarm.");
@@ -124,12 +113,26 @@ function addAlarm() {
     alarmDateTime.setDate(alarmDay + 1);
   }
 
-  addAlarmToList(alarmTitle, alarmDateTime);
+  addAlarmToList(alarmTitle, alarmDateTime, selectedDays);
   startAlarm(alarms.length - 1);
 
   document.getElementById("alarmTime").value = "";
   document.getElementById("title").value = "";
 }
+
+function getSelectedDays() {
+  const daysCheckboxes = document.querySelectorAll(".days-container input[type='checkbox']");
+  const selectedDays = [];
+
+  daysCheckboxes.forEach((checkbox, index) => {
+    if (checkbox.checked) {
+      selectedDays.push(checkbox.id.substring(6, 9)); // Extract the day abbreviation (e.g., 'repeatMonday' becomes 'Mon')
+    }
+  });
+
+  return selectedDays;
+}
+
 
 document.getElementById("stopAlarmButton").addEventListener("click", function () {
   stopAlarm();
@@ -158,13 +161,28 @@ function stopAlarm() {
   document.getElementById("alarmSound").currentTime = 0;
 }
 
+function editAlarm(alarmId) {
+  const alarmIndex = alarms.findIndex((alarm) => alarm.id === alarmId);
+  const editedAlarm = alarms[alarmIndex];
+
+  // Implement logic to show a modal for editing and updating the alarm data
+  // Update the selected days for the alarm based on user input
+
+  // Restart the alarm with the updated data
+  clearInterval(editedAlarm.interval);
+  editedAlarm.interval = startAlarm(alarmIndex);
+
+  // Save the updated alarms to localStorage
+  localStorage.setItem('alarms', JSON.stringify(alarms));
+}
+
 // Load alarms from localStorage when the page loads
 window.addEventListener('load', () => {
   if (alarms.length > 0) {
     alarms.forEach((alarm, index) => {
       const alarmDateTime = new Date(alarm.time);
       if (alarmDateTime > new Date()) {
-        addAlarmToList(alarm.title, alarmDateTime);
+        addAlarmToList(alarm.title, alarmDateTime, alarm.days);
         alarms[index].interval = startAlarm(index);
       }
     });
