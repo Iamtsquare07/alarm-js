@@ -1,7 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Croissant+One&display=swap');
 
 body {
-    padding: 10px;
+    padding: 0;
+    margin: 0;
     background-color: #000014;
     width: 100%;
     height: 100vh;
@@ -158,6 +159,19 @@ input:checked+.slider:before {
     border-radius: 50%;
 }
 
+.days-container {
+    display: flex;
+    margin-bottom: 5px;
+}
+
+.days-container span {
+    margin-right: 5px;
+}
+
+.alarms li {
+    margin-bottom: 15px;
+}
+
 
 ::-webkit-scrollbar {
     width: 2px;
@@ -179,6 +193,12 @@ input:checked+.slider:before {
 
 #alarmH2 {
     display: none;
+}
+
+
+
+.active {
+    font-weight: bold;
 }
 
 @media only screen and (min-width: 1024px) {
