@@ -2,61 +2,61 @@
 <html>
 
 <head>
-  <link rel="stylesheet" href="./styles.css">
-  <title>Alarm Clock</title>
+    <link rel="stylesheet" href="./styles.css">
+    <title>Alarm Clock</title>
 </head>
 
 <body>
     <h1>Alarm Clock</h1>
-  <div class="alarm-root">
-    <h2>Set An Alarm</h2>
-    <div class="container">
-      <label for="alarmTime">Alarm time:</label>
-      <input type="time" id="alarmTime" required>
-      <label for="title">Alarm Title:</label>
-      <input type="text" id="title" required>
-      <div class="days-container">
-        <label>Repeat on:</label>
-        <input type="checkbox" id="repeatSunday"> Sun
-        <input type="checkbox" id="repeatMonday"> Mon
-        <input type="checkbox" id="repeatTuesday"> Tue
-        <input type="checkbox" id="repeatWednesday"> Wed
-        <input type="checkbox" id="repeatThursday"> Thu
-        <input type="checkbox" id="repeatFriday"> Fri
-        <input type="checkbox" id="repeatSaturday"> Sat
-      </div>
-      <div class="alarm-buttons">
-        <button id="setAlarmButton">Set Alarm</button>
-        <button id="stopAlarmButton">Stop Alarm</button>
-      </div>
-    </div>
-    <br>
-    <audio id="alarmSound" src="./tunes/Timaya_SWEET_US_9jaflaver.com_.mp3" preload="auto"></audio>
-    <br>
-    <div class="display-box">
-      <div id="display"></div>
-    </div>
+    <div class="alarm-root">
+        <h2>Set An Alarm</h2>
+        <div class="container">
+            <label for="alarmTime">Alarm time:</label>
+            <input type="time" id="alarmTime" required>
+            <label for="title">Alarm Title:</label>
+            <input type="text" id="title" required>
+            <div class="days-container">
+                <label>Repeat on:</label>
+                <input type="checkbox" id="repeatSunday"> Sun
+                <input type="checkbox" id="repeatMonday"> Mon
+                <input type="checkbox" id="repeatTuesday"> Tue
+                <input type="checkbox" id="repeatWednesday"> Wed
+                <input type="checkbox" id="repeatThursday"> Thu
+                <input type="checkbox" id="repeatFriday"> Fri
+                <input type="checkbox" id="repeatSaturday"> Sat
+            </div>
+            <div class="alarm-buttons">
+                <button id="setAlarmButton">Set Alarm</button>
+                <button id="stopAlarmButton">Stop Alarm</button>
+            </div>
+        </div>
+        <br>
+        <audio id="alarmSound" src="./tunes/Timaya_SWEET_US_9jaflaver.com_.mp3" preload="auto"></audio>
+        <br>
+        <div class="display-box">
+            <div id="display"></div>
+        </div>
 
-    <div class="alarms">
-      <h2 id="alarmH2">Alarms</h2>
-      <ul id="alarm-list"></ul>
+        <div class="alarms">
+            <h2 id="alarmH2">Alarms</h2>
+            <ul id="alarm-list"></ul>
+        </div>
     </div>
-  </div>
-  <div id="editModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeEditModal()">&times;</span>
-      <h2>Edit Alarm</h2>
-      <label for="editAlarmTime">New Alarm time:</label>
-      <input type="time" id="editAlarmTime" required>
-      <label for="editTitle">New Alarm Title:</label>
-      <input type="text" id="editTitle" required>
-      <div class="days-container" id="editDaysContainer">
-        <!-- Repeat the same structure as in the alarm list to show selected days -->
-      </div>
-      <button onclick="updateAlarm()">Update Alarm</button>
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h2>Edit Alarm</h2>
+            <label for="editAlarmTime">New Alarm time:</label>
+            <input type="time" id="editAlarmTime" required>
+            <label for="editTitle">New Alarm Title:</label>
+            <input type="text" id="editTitle" required>
+            <div class="days-container" id="editDaysContainer">
+                <!-- Repeat the same structure as in the alarm list to show selected days -->
+            </div>
+            <button onclick="updateAlarm()">Update Alarm</button>
+        </div>
     </div>
-  </div>
-  <script src="./app.js"></script>
+    <script src="./app.js"></script>
 </body>
 
 </html>
