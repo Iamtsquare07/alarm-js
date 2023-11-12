@@ -2,15 +2,15 @@ let alarms = JSON.parse(localStorage.getItem("alarms")) || [];
 let nextAlarmId = localStorage.getItem("nextAlarmId") || 1;
 const display = document.getElementById("display");
 const alarmList = document.querySelector(".alarms");
-let editedAlarm; // Variable to store the currently edited alarm
-let alarmIndex; // Variable to store the index of the edited alarm
+let editedAlarm;
+let alarmIndex;
 const daysAbbreviations = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 function startAlarm(alarmIndex) {
   const alarm = alarms[alarmIndex];
   return setInterval(function () {
     const currentDate = new Date();
-    const currentDay = currentDate.getDay(); // 0 (Sunday) to 6 (Saturday)
+    const currentDay = currentDate.getDay();
 
     // Check if the alarm is set for today based on recurring days
     if (alarm.days.includes(currentDay)) {
