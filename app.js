@@ -6,28 +6,40 @@ const alarmList = document.querySelector(".alarms");
 function startAlarm(alarmIndex) {
   const alarm = alarms[alarmIndex];
   return setInterval(function () {
-    const timeLeft = Math.max(0, Math.floor((alarm.time - new Date()) / 1000));
-    displayCountdown(timeLeft, alarm.title);
-    display.style.display = "inline";
-    if (timeLeft === 0) {
-      playAlarm();
-      display.textContent = `Time for ${alarm.title}`;
-      document.getElementById("stopAlarmButton").style.display = "block";
-      clearInterval(alarm.interval);
+    const currentDate = new Date();
+    const currentDay = currentDate.getDay(); // 0 (Sunday) to 6 (Saturday)
+
+    // Check if the alarm is set for today based on recurring days
+    if (alarm.days.includes(currentDay)) {
+      const timeLeft = Math.max(0, Math.floor((alarm.time - currentDate) / 1000));
+      displayCountdown(timeLeft, alarm.title);
+      display.style.display = "inline";
+      if (timeLeft === 0) {
+        playAlarm();
+        display.textContent = `Time for ${alarm.title}`;
+        document.getElementById("stopAlarmButton").style.display = "block";
+        clearInterval(alarm.interval);
+      }
     }
   }, 1000);
 }
 
 function addAlarmToList(alarmTitle, alarmTime) {
-  // Create a new alarm item with a toggle switch
   const alarmItem = document.createElement("li");
-  const alarmId = nextAlarmId++; // Assign a unique ID
+  const alarmId = nextAlarmId++;
   alarmItem.innerHTML = `
     <label>${alarmTitle} (${alarmTime.toLocaleTimeString()})</label>
     <label class="switch">
       <input type="checkbox" checked>
       <span class="slider round"></span>
     </label>
+    <div class="days-container">
+      <label>Repeat on:</label>
+      <input type="checkbox" id="repeatMonday"> Mon
+      <input type="checkbox" id="repeatWednesday"> Wed
+      <!-- Add more checkboxes for other days as needed -->
+    </div>
+    <button class="edit-button">Edit</button>
   `;
 
   const toggleSwitch = alarmItem.querySelector("input[type='checkbox']");
@@ -36,36 +48,48 @@ function addAlarmToList(alarmTitle, alarmTime) {
       (alarm) => alarm.id === alarmId
     );
     if (toggleSwitch.checked) {
-      // Start the countdown immediately
       alarms[alarmIndex].interval = startAlarm(alarmIndex);
     } else {
-      // If the toggle is switched off, clear the alarm interval
       clearInterval(alarms[alarmIndex].interval);
-      display.style.display = "none"; // Hide the display
+      display.style.display = "none";
     }
   });
 
-  // Store alarm settings and state in the alarms array
-  const newAlarm = {
+  const editButton = alarmItem.querySelector(".edit-button");
+  editButton.addEventListener("click", function () {
+    editAlarm(alarmId);
+  });
+
+  const daysCheckboxes = alarmItem.querySelectorAll(".days-container input[type='checkbox']");
+  daysCheckboxes.forEach((checkbox, index) => {
+    checkbox.addEventListener("change", function () {
+      if (checkbox.checked) {
+        alarms[alarmIndex].days.push(index); // Store the selected day index
+      } else {
+        const dayIndex = alarms[alarmIndex].days.indexOf(index);
+        if (dayIndex !== -1) {
+          alarms[alarmIndex].days.splice(dayIndex, 1); // Remove the selected day index
+        }
+      }
+    });
+  });
+
+  alarms.push({
     id: alarmId,
     title: alarmTitle,
     time: alarmTime,
     toggleSwitch: toggleSwitch,
     interval: null,
-    active: true, // Set alarm as active by default
-  };
+    active: true,
+    days: [], // Array to store selected days for recurring alarm
+  });
 
-  alarms.push(newAlarm);
   alarmList.appendChild(alarmItem);
   document.getElementById("alarmH2").style.display = "block";
 
-  // Save the updated alarms array to localStorage
+  // Save the updated alarms and nextAlarmId to localStorage
   localStorage.setItem('alarms', JSON.stringify(alarms));
   localStorage.setItem('nextAlarmId', nextAlarmId);
-
-  // Start the alarm immediately
-  newAlarm.interval = startAlarm(alarms.length - 1);
-
 }
 
 document.getElementById("setAlarmButton").addEventListener("click", addAlarm);
@@ -96,14 +120,11 @@ function addAlarm() {
 
   const alarmDateTime = new Date(alarmYear, alarmMonth, alarmDay, hour, minute);
 
-  // Check if the selected time is earlier than the current time
   if (alarmDateTime <= now) {
     alarmDateTime.setDate(alarmDay + 1);
   }
 
-  // Add the alarm to the list and start it immediately
   addAlarmToList(alarmTitle, alarmDateTime);
-
   startAlarm(alarms.length - 1);
 
   document.getElementById("alarmTime").value = "";
@@ -137,17 +158,13 @@ function stopAlarm() {
   document.getElementById("alarmSound").currentTime = 0;
 }
 
-
 // Load alarms from localStorage when the page loads
 window.addEventListener('load', () => {
-  alarmList.innerHTML = '';
-
   if (alarms.length > 0) {
     alarms.forEach((alarm, index) => {
       const alarmDateTime = new Date(alarm.time);
       if (alarmDateTime > new Date()) {
         addAlarmToList(alarm.title, alarmDateTime);
-        // Call startAlarm for each loaded alarm
         alarms[index].interval = startAlarm(index);
       }
     });
