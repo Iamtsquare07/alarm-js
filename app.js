@@ -1,5 +1,5 @@
-let alarms = JSON.parse(localStorage.getItem('alarms')) || [];
-let nextAlarmId = localStorage.getItem('nextAlarmId') || 1;
+let alarms = JSON.parse(localStorage.getItem("alarms")) || [];
+let nextAlarmId = localStorage.getItem("nextAlarmId") || 1;
 const display = document.getElementById("display");
 const alarmList = document.querySelector(".alarms");
 let editedAlarm; // Variable to store the currently edited alarm
@@ -14,7 +14,10 @@ function startAlarm(alarmIndex) {
 
     // Check if the alarm is set for today based on recurring days
     if (alarm.days.includes(currentDay)) {
-      const timeLeft = Math.max(0, Math.floor((alarm.time - currentDate) / 1000));
+      const timeLeft = Math.max(
+        0,
+        Math.floor((alarm.time - currentDate) / 1000)
+      );
       displayCountdown(timeLeft, alarm.title);
       display.style.display = "inline";
       if (timeLeft === 0) {
@@ -39,7 +42,14 @@ function addAlarmToList(alarmTitle, alarmTime, selectedDays) {
       <span class="slider round"></span>
     </label>
     <div class="days-container">
-      ${daysAbbreviations.map(day => `<span class="${selectedDaysSet.has(day) ? 'active' : ''}">${day}</span>`).join(' ')}
+      ${daysAbbreviations
+        .map(
+          (day) =>
+            `<span class="${
+              selectedDaysSet.has(day) ? "active" : ""
+            }">${day}</span>`
+        )
+        .join(" ")}
     </div>
     <button class="edit-button">Edit</button>
   `;
@@ -74,8 +84,8 @@ function addAlarmToList(alarmTitle, alarmTime, selectedDays) {
   document.getElementById("alarmH2").style.display = "block";
 
   // Save the updated alarms and nextAlarmId to localStorage
-  localStorage.setItem('alarms', JSON.stringify(alarms));
-  localStorage.setItem('nextAlarmId', nextAlarmId);
+  localStorage.setItem("alarms", JSON.stringify(alarms));
+  localStorage.setItem("nextAlarmId", nextAlarmId);
 }
 
 document.getElementById("setAlarmButton").addEventListener("click", addAlarm);
@@ -119,7 +129,9 @@ function addAlarm() {
 }
 
 function getSelectedDays() {
-  const daysCheckboxes = document.querySelectorAll(".days-container input[type='checkbox']");
+  const daysCheckboxes = document.querySelectorAll(
+    ".days-container input[type='checkbox']"
+  );
   const selectedDays = [];
 
   daysCheckboxes.forEach((checkbox, index) => {
@@ -131,15 +143,17 @@ function getSelectedDays() {
   return selectedDays;
 }
 
-document.getElementById("stopAlarmButton").addEventListener("click", function () {
-  stopAlarm();
-});
+document
+  .getElementById("stopAlarmButton")
+  .addEventListener("click", function () {
+    stopAlarm();
+  });
 
 function displayCountdown(seconds, alarmTitle) {
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
-  display.textContent = `${alarmTitle} starts in ${
-    minutes}:${remainingSeconds < 10 ? "0" : ""
+  display.textContent = `${alarmTitle} starts in ${minutes}:${
+    remainingSeconds < 10 ? "0" : ""
   }${remainingSeconds}`;
 }
 
@@ -167,12 +181,18 @@ function openEditModal(alarmId) {
   document.getElementById("editTitle").value = editedAlarm.title;
 
   const editDaysContainer = document.getElementById("editDaysContainer");
-  editDaysContainer.innerHTML = daysAbbreviations.map(day => `
+  editDaysContainer.innerHTML = daysAbbreviations
+    .map(
+      (day) => `
     <label>
-      <input type="checkbox" ${editedAlarm.days.includes(day) ? 'checked' : ''} id="editRepeat${day}">
+      <input type="checkbox" ${
+        editedAlarm.days.includes(day) ? "checked" : ""
+      } id="editRepeat${day}">
       ${day}
     </label>
-  `).join(' ');
+  `
+    )
+    .join(" ");
 
   // Display the edit modal
   document.getElementById("editModal").style.display = "block";
@@ -198,7 +218,7 @@ function updateAlarm() {
   editedAlarm.interval = startAlarm(alarmIndex);
 
   // Save the updated alarms to localStorage
-  localStorage.setItem('alarms', JSON.stringify(alarms));
+  localStorage.setItem("alarms", JSON.stringify(alarms));
 
   // Close the edit modal
   closeEditModal();
@@ -218,7 +238,7 @@ function getSelectedDaysFromModal() {
 }
 
 // Load alarms from localStorage when the page loads
-window.addEventListener('load', () => {
+window.addEventListener("load", () => {
   if (alarms.length > 0) {
     alarms.forEach((alarm, index) => {
       const alarmDateTime = new Date(alarm.time);
@@ -232,14 +252,20 @@ window.addEventListener('load', () => {
 
 // Helper function to format time
 function formatTime(time) {
-  const hours = time.getHours().toString().padStart(2, '0');
-  const minutes = time.getMinutes().toString().padStart(2, '0');
+  const hours = time.getHours().toString().padStart(2, "0");
+  const minutes = time.getMinutes().toString().padStart(2, "0");
   return `${hours}:${minutes}`;
 }
 
 // Helper function to parse time
 function parseTime(timeString) {
-  const [hours, minutes] = timeString.split(':');
+  const [hours, minutes] = timeString.split(":");
   const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+  return new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    hours,
+    minutes
+  );
 }
