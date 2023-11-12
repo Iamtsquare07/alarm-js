@@ -2,6 +2,9 @@ let alarms = JSON.parse(localStorage.getItem('alarms')) || [];
 let nextAlarmId = localStorage.getItem('nextAlarmId') || 1;
 const display = document.getElementById("display");
 const alarmList = document.querySelector(".alarms");
+let editedAlarm; // Variable to store the currently edited alarm
+let alarmIndex; // Variable to store the index of the edited alarm
+const daysAbbreviations = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 function startAlarm(alarmIndex) {
   const alarm = alarms[alarmIndex];
@@ -27,7 +30,6 @@ function startAlarm(alarmIndex) {
 function addAlarmToList(alarmTitle, alarmTime, selectedDays) {
   const alarmItem = document.createElement("li");
   const alarmId = nextAlarmId++;
-  const daysAbbreviations = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const selectedDaysSet = new Set(selectedDays);
 
   alarmItem.innerHTML = `
@@ -55,7 +57,7 @@ function addAlarmToList(alarmTitle, alarmTime, selectedDays) {
 
   const editButton = alarmItem.querySelector(".edit-button");
   editButton.addEventListener("click", function () {
-    editAlarm(alarmId);
+    openEditModal(alarmId);
   });
 
   alarms.push({
@@ -75,10 +77,6 @@ function addAlarmToList(alarmTitle, alarmTime, selectedDays) {
   localStorage.setItem('alarms', JSON.stringify(alarms));
   localStorage.setItem('nextAlarmId', nextAlarmId);
 }
-
-
-
-
 
 document.getElementById("setAlarmButton").addEventListener("click", addAlarm);
 
@@ -133,7 +131,6 @@ function getSelectedDays() {
   return selectedDays;
 }
 
-
 document.getElementById("stopAlarmButton").addEventListener("click", function () {
   stopAlarm();
 });
@@ -161,12 +158,40 @@ function stopAlarm() {
   document.getElementById("alarmSound").currentTime = 0;
 }
 
-function editAlarm(alarmId) {
-  const alarmIndex = alarms.findIndex((alarm) => alarm.id === alarmId);
-  const editedAlarm = alarms[alarmIndex];
+function openEditModal(alarmId) {
+  alarmIndex = alarms.findIndex((alarm) => alarm.id === alarmId);
+  editedAlarm = alarms[alarmIndex];
 
-  // Implement logic to show a modal for editing and updating the alarm data
-  // Update the selected days for the alarm based on user input
+  // Set initial values in the edit modal
+  document.getElementById("editAlarmTime").value = formatTime(editedAlarm.time);
+  document.getElementById("editTitle").value = editedAlarm.title;
+
+  const editDaysContainer = document.getElementById("editDaysContainer");
+  editDaysContainer.innerHTML = daysAbbreviations.map(day => `
+    <label>
+      <input type="checkbox" ${editedAlarm.days.includes(day) ? 'checked' : ''} id="editRepeat${day}">
+      ${day}
+    </label>
+  `).join(' ');
+
+  // Display the edit modal
+  document.getElementById("editModal").style.display = "block";
+}
+
+function closeEditModal() {
+  document.getElementById("editModal").style.display = "none";
+}
+
+function updateAlarm() {
+  const editAlarmTime = document.getElementById("editAlarmTime").value;
+  const editTitle = document.getElementById("editTitle").value;
+
+  const selectedDays = getSelectedDaysFromModal();
+
+  // Update the alarm data
+  editedAlarm.time = parseTime(editAlarmTime);
+  editedAlarm.title = editTitle;
+  editedAlarm.days = selectedDays;
 
   // Restart the alarm with the updated data
   clearInterval(editedAlarm.interval);
@@ -174,6 +199,22 @@ function editAlarm(alarmId) {
 
   // Save the updated alarms to localStorage
   localStorage.setItem('alarms', JSON.stringify(alarms));
+
+  // Close the edit modal
+  closeEditModal();
+}
+
+function getSelectedDaysFromModal() {
+  const daysCheckboxes = document.querySelectorAll("#editDaysContainer span");
+  const selectedDays = [];
+
+  daysCheckboxes.forEach((checkbox, index) => {
+    if (checkbox.classList.contains("active")) {
+      selectedDays.push(checkbox.textContent);
+    }
+  });
+
+  return selectedDays;
 }
 
 // Load alarms from localStorage when the page loads
@@ -188,3 +229,17 @@ window.addEventListener('load', () => {
     });
   }
 });
+
+// Helper function to format time
+function formatTime(time) {
+  const hours = time.getHours().toString().padStart(2, '0');
+  const minutes = time.getMinutes().toString().padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
+
+// Helper function to parse time
+function parseTime(timeString) {
+  const [hours, minutes] = timeString.split(':');
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+}
